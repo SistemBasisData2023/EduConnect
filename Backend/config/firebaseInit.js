@@ -1,11 +1,5 @@
 const firebase = require("firebase/app");
 const { getStorage } = require("firebase/storage");
-// const {
-//   getStorage,
-//   ref,
-//   uploadBytes,
-//   getDownloadURL,
-// } = require("firebase/storage");
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,

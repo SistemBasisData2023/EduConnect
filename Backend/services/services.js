@@ -1,10 +1,5 @@
 const { db } = require("../config/connectToDatabase");
-const {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} = require("firebase/storage");
+const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 const { storage } = require("../config/firebaseInit");
 const mime = require("mime-types");
 

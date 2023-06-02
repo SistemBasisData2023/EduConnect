@@ -124,24 +124,6 @@ const addStudent = async (req, res) => {
   }
 };
 
-// const checkIdExists = async (table, id) => {
-//   const query = `
-//     SELECT EXISTS (
-//       SELECT 1
-//       FROM ${table}
-//       WHERE id = $1
-//     )
-//   `;
-//   try {
-//     const result = await db.query(query, [id]);
-//     const exists = result.rows[0].exists;
-//     return exists;
-//   } catch (error) {
-//     console.error("Error executing query:", error);
-//     throw error;
-//   }
-// };
-
 module.exports = {
   createSubject,
   getAllSubjects,

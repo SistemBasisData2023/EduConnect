@@ -5,6 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import SubjectPage from "./pages/SubjectPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import AddTaskPage from "./pages/AddTaskPage";
 
 function App() {
   return (
@@ -14,7 +16,9 @@ function App() {
       <Route path="/dashboard" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="subject" element={<SubjectPage />} />
+        <Route path="task" element={<AddTaskPage />} />
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

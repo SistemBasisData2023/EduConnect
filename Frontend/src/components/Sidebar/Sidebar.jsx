@@ -15,7 +15,7 @@ import { MdMenu } from "react-icons/md";
 import { useMediaQuery } from "react-responsive";
 
 const Sidebar = () => {
-  let isTab = useMediaQuery({ query: "(max-width: 768px)" });
+  let isTab = useMediaQuery({ query: "(max-width: 1100px)" });
   const { pathname } = useLocation();
 
   const subMenusList = [
@@ -92,10 +92,10 @@ const Sidebar = () => {
         variants={Sidebar_animation}
         initial={{ x: isTab ? -250 : 0 }}
         animate={isOpen ? "open" : "closed"}
-        className="bg-white text-gray shadow-xl z-[999] w-[16rem] max-w-[16rem] h-screen overflow-hidden  md:relative fixed"
+        className="bg-white text-black shadow-lg z-[999] w-[16rem] max-w-[16rem] h-screen overflow-hidden  md:relative fixed"
       >
         {/* logo */}
-        <div className="flex items-center gap-2.5 font-medium border-b border-slate-300 py-3 mx-3">
+        <div className="flex items-center gap-2.5 font-medium border-b border-slate-300 py-3 my-1 mx-3">
           <img
             src="https://img.icons8.com/color/512/firebase.png"
             alt="Icon"
@@ -110,10 +110,10 @@ const Sidebar = () => {
             <li>
               <NavLink
                 className="flex items-center gap-6 p-2.5 rounded-md md:cursor-pointer cursor-default duration-300 font-medium "
-                to="/"
+                to="/dashboard"
               >
                 <AiOutlineAppstore size={23} className="min-w-max" />
-                All Apps
+                Dashboard
               </NavLink>
             </li>
             <li>
@@ -196,7 +196,10 @@ const Sidebar = () => {
           <IoIosArrowBack size={25} />
         </motion.div>
       </motion.div>
-      <div className="m-3 md:hidden" onClick={() => setIsOpen(true)}>
+      <div
+        className="m-3 lg:hidden absolute bottom-0"
+        onClick={() => setIsOpen(true)}
+      >
         <MdMenu size={25} />
       </div>
     </div>

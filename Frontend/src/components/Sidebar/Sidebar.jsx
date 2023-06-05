@@ -14,10 +14,10 @@ import SubMenu from "./SubMenu";
 import { MdMenu } from "react-icons/md";
 import { useMediaQuery } from "react-responsive";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   let isTab = useMediaQuery({ query: "(max-width: 1100px)" });
   const { pathname } = useLocation();
-
+  console.log(isTab);
   const subMenusList = [
     {
       name: "build",
@@ -79,11 +79,11 @@ const Sidebar = () => {
   }, [pathname]);
 
   //Sidebar Open State
-  const [isOpen, setIsOpen] = useState(isTab ? false : true); //Istab True open bakal selalu false
+  // const [isOpen, setIsOpen] = useState(); //Istab True open bakal selalu false
   return (
-    <div>
+    <div className="">
       <div
-        className={`fixed inset-0 bg-black/50 z-[900] max-h-screen md:hidden ${
+        className={`fixed inset-0 bg-black/50 z-[900] max-h-screen lg:hidden ${
           isOpen ? "block" : "hidden"
         }`}
         onClick={() => setIsOpen(false)}
@@ -92,10 +92,10 @@ const Sidebar = () => {
         variants={Sidebar_animation}
         initial={{ x: isTab ? -250 : 0 }}
         animate={isOpen ? "open" : "closed"}
-        className="bg-white text-black shadow-lg z-[999] w-[16rem] max-w-[16rem] h-screen overflow-hidden  md:relative fixed"
+        className="bg-white text-black shadow-lg z-[999] w-[16rem] max-w-[16rem] h-screen overflow-hidden  lg:relative fixed"
       >
         {/* logo */}
-        <div className="flex items-center gap-2.5 font-medium border-b border-slate-300 py-3 my-1 mx-3">
+        <div className="flex items-center gap-2.5 font-medium border-b border-slate-300 py-3 my-1 mx-3 cursor-pointer">
           <img
             src="https://img.icons8.com/color/512/firebase.png"
             alt="Icon"

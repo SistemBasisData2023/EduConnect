@@ -6,6 +6,17 @@ const mime = require("mime-types");
 const uploadHandler = async (req, folderName, fileName) => {
   try {
     const fileExtension = mime.extension(req.file.mimetype);
+    let finalFileName = fileName;
+
+    // If fileName is not provided, use the original file name
+    if (!finalFileName) {
+      const originalFileName = req.file.originalname;
+      const originalFileNameWithoutExtension = originalFileName
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+      finalFileName = originalFileNameWithoutExtension;
+    }
 
     const storageRef = ref(
       storage,
@@ -78,9 +89,46 @@ const checkIdExists = async (table, id) => {
   }
 };
 
+const getTotalRows = async (req, query) => {
+  const search = req.query.search;
+
+  if (search) {
+    query += ` WHERE name ILIKE '%${search}%'`;
+  }
+
+  console.log(query);
+
+  try {
+    const results = await db.query(query);
+    return results.rows.length;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+function paginate(req, query) {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 0;
+    const search = req.query.search;
+
+    if (search) {
+      query += ` WHERE s.name ILIKE '%${search}%'`;
+    }
+
+    query += ` LIMIT ${limit} OFFSET ${page * limit}`;
+    console.log(query);
+    return query;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   checkIdExists,
   getSubjectNameById,
   uploadHandler,
   getTaskObjectById,
+  paginate,
+  getTotalRows,
 };

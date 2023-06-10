@@ -3,7 +3,21 @@ const { db } = require("../config/connectToDatabase");
 const getAllTeachers = async (req, res) => {
   try {
     //Find All teacher
-    const query = "SELECT * FROM teacher";
+    const query = `SELECT
+    teacher.id,
+      teacher.name,
+      teacher.age,
+      teacher.nomor_induk_guru,
+      subject.id AS subject_id,
+      subject.name AS subject_name,
+      classroom.id AS classroom_id,
+      classroom.name AS classroom_name
+  FROM
+      teacher
+  JOIN
+      subject ON teacher.ID = subject.teacher_id
+  JOIN
+      classroom ON teacher.classroom_id = classroom.ID;`;
 
     const results = await db.query(query);
 
@@ -28,7 +42,21 @@ const getTeacherById = async (req, res) => {
   try {
     const id = req.params.id;
     //Find User
-    const query = "SELECT * FROM teacher WHERE id = $1";
+    const query = `SELECT
+    teacher.id,
+      teacher.name,
+      teacher.age,
+      teacher.nomor_induk_guru,
+      subject.id AS subject_id,
+      subject.name AS subject_name,
+      classroom.id AS classroom_id,
+      classroom.name AS classroom_name
+  FROM
+      teacher
+  JOIN
+      subject ON teacher.ID = subject.teacher_id
+  JOIN
+      classroom ON teacher.classroom_id = classroom.ID WHERE teacher.id = $1`;
     const results = await db.query(query, [id]);
 
     if (results.rows.length == 0) {

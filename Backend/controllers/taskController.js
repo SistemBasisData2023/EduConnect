@@ -120,23 +120,46 @@ const submitTask = async (req, res) => {
     res.status(404).json({ message: error.message, error: true });
   }
 };
+//Menambahkan nilai pada tugas murid
+const addScore = async (req, res) => {
+  try {
+    const { submission_id, score } = req.body;
+    console.log(req.body);
+
+    const query = `UPDATE submission
+    SET score = $2
+    WHERE ID = $1;
+    `;
+
+    const result = await db.query(query, [submission_id, score]);
+
+    //Response
+    res.status(200).json({
+      message: "Succefully Add Score",
+      error: false,
+      data: result.rowCount,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
 
 //Melihat Task yang sudah disubmit oleh siswa berdasarkan id dari task (POV Teacher)
 const getTaskSubmission = async (req, res) => {
   try {
     const task_id = req.params.task_id;
     const query = `
-    SELECT t.id, t.name, t.deadline, t.description, t.is_active, t.url as link_soal,ts.url as link_submission, ts.is_completed, ts.submitted_at, ts.id
+    SELECT t.id as task_id, t.name as task_name, t.deadline, t.description, t.is_active, t.url as link_soal,ts.url as link_submission, ts.is_completed, ts.submitted_at, ts.id as submission_id, ts.score as score, ts.name as name
     FROM task t
     LEFT JOIN submission ts ON t.id = ts.task_id
     WHERE t.id = $1 and is_completed = $2
     `;
 
+    const results = await db.query(query, [task_id, true]);
     const submissions = results.rows;
 
-    const results = await db.query(query, [task_id, true]);
     res.status(200).json({
-      message: "Succefully Submit Task",
+      message: "Succefully Get Task Submission",
       error: false,
       data: submissions,
     });
@@ -146,12 +169,18 @@ const getTaskSubmission = async (req, res) => {
 };
 
 //Melihat List Task yang ada pada subject tertentu (POV Student)
-const getTaskBySubject = async () => {
+const getTaskBySubject = async (req, res) => {
   try {
     const subject_id = req.params.subject_id;
-    const query = `SELECT * FROM task WHERE subject_id = $1`;
+    const student_id = req.params.student_id;
+    const query = `SELECT t.*, s.is_completed
+    FROM task t
+    INNER JOIN submission s ON t.ID = s.task_id
+    WHERE s.student_id = $1
+    AND t.subject_id = $2;
+    `;
 
-    const results = await db.query(query, [subject_id]);
+    const results = await db.query(query, [student_id, subject_id]);
 
     const tasks = results.rows;
 
@@ -164,10 +193,234 @@ const getTaskBySubject = async () => {
     res.status(404).json({ message: error.message, error: true });
   }
 };
+const getAllTask = async (req, res) => {
+  try {
+    const query = `SELECT * FROM task`;
+
+    const results = await db.query(query);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetAllTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getTaskTeacher = async (req, res) => {
+  try {
+    console.log(req.params);
+    const subject_id = req.params.subject_id;
+    console.log(subject_id);
+
+    const query = `SELECT * FROM task WHERE subject_id = $1`;
+
+    const results = await db.query(query, [subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetTaskTeacher",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getActiveTask = async (req, res) => {
+  const subject_id = req.params.subject_id;
+  const student_id = req.params.student_id;
+
+  try {
+    const query = `SELECT t.*, s.is_completed
+    FROM task t
+    INNER JOIN submission s ON t.ID = s.task_id
+    WHERE s.student_id = $1
+    AND t.subject_id = $2
+    AND t.is_active = true
+    AND s.is_completed = false`;
+
+    const results = await db.query(query, [student_id, subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetActiveTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getOverdueTask = async (req, res) => {
+  const subject_id = req.params.subject_id;
+  const student_id = req.params.student_id;
+
+  try {
+    const query = `SELECT t.*, s.is_completed
+    FROM task t
+    INNER JOIN submission s ON t.ID = s.task_id
+    WHERE s.student_id = $1
+    AND t.subject_id = $2
+    AND t.is_active = false
+    AND s.is_completed = false`;
+
+    const results = await db.query(query, [student_id, subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetOverdueTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getCompletedTask = async (req, res) => {
+  const subject_id = req.params.subject_id;
+  const student_id = req.params.student_id;
+
+  try {
+    const query = `SELECT t.*, s.is_completed
+    FROM task t
+    INNER JOIN submission s ON t.ID = s.task_id
+    WHERE s.student_id = $1
+    AND t.subject_id = $2
+    AND s.is_completed = true`;
+
+    const results = await db.query(query, [student_id, subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetCompletedTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getTaskById = async (req, res) => {
+  const task_id = req.params.task_id;
+
+  try {
+    const query = `SELECT t.*, s.is_completed
+    FROM task t
+    INNER JOIN submission s ON t.ID = s.task_id
+    WHERE t.id = $1`;
+
+    const results = await db.query(query, [task_id]);
+
+    const task = results.rows[0];
+
+    res.status(200).json({
+      message: "Succefully GetTaskById",
+      error: false,
+      data: task,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getActiveTeacherTask = async (req, res) => {
+  const subject_id = req.params.subject_id;
+
+  try {
+    const query = `SELECT *
+    FROM task t
+    WHERE t.subject_id = $1
+    AND t.is_active = true`;
+
+    const results = await db.query(query, [subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetActiveTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getOverdueTeacherTask = async (req, res) => {
+  const subject_id = req.params.subject_id;
+
+  try {
+    const query = `SELECT *
+    FROM task t
+    WHERE t.subject_id = $1
+    AND t.is_active = false`;
+
+    const results = await db.query(query, [subject_id]);
+
+    const tasks = results.rows;
+
+    res.status(200).json({
+      message: "Succefully GetActiveTask",
+      error: false,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const updateTaskStatus = async (req, res) => {
+  const subject_Id = req.body.subject_Id; // Assuming subjectId is sent in the request body
+
+  try {
+    const currentTime = new Date();
+
+    // Update isActive to false for tasks with the given subjectId and deadline < currentTime
+    const result = await db.query(
+      "UPDATE task SET isActive = false WHERE subject_id = $1 AND deadline < $2",
+      [subject_Id, currentTime]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "No tasks found or deadlines have not passed" });
+    }
+
+    res.json({ message: "Tasks isActive updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+};
 
 module.exports = {
   assignTask,
   submitTask,
+  addScore,
   getTaskSubmission,
   getTaskBySubject,
+  getAllTask,
+  getOverdueTask,
+  getActiveTask,
+  getCompletedTask,
+  getTaskById,
+  getAllTask,
+  getTaskTeacher,
+  getActiveTeacherTask,
+  getOverdueTeacherTask,
+  updateTaskStatus,
 };

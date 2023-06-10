@@ -1,22 +1,26 @@
 const { db } = require("../config/connectToDatabase");
+const { paginate, getTotalRows } = require("../services/services");
 
 const getAllStudent = async (req, res) => {
   try {
     //Find All Students
-    const query = "SELECT * FROM student";
+    let query = `SELECT s.id, s.name as name, s.age, nomor_induk_siswa , c.name as classroom_name, c.id as classroom_id
+    FROM student as s
+    INNER JOIN classroom as c ON s.classroom_id = c.id`;
 
     const results = await db.query(query);
 
-    if (results.rows.length == 0) {
-      res.status(404).json({ message: "Student Not Found" });
-      return;
-    }
+    // if (results.rows.length == 0) {
+    //   res.status(404).json({ message: "Student Not Found" });
+    //   return;
+    // }
 
     const student = results.rows;
 
-    res
-      .status(200)
-      .json({ message: "Successfully GetAllStudent", data: student });
+    res.status(200).json({
+      message: "Successfully GetAllStudent",
+      data: student,
+    });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -27,6 +31,7 @@ const getStudentById = async (req, res) => {
     const id = req.params.id;
     //Find User
     const query = "SELECT * FROM student WHERE id = $1";
+
     const results = await db.query(query, [id]);
 
     if (results.rows.length == 0) {
@@ -45,16 +50,20 @@ const getStudentById = async (req, res) => {
 
 const getStudentByClassroom = async (req, res) => {
   try {
-    const { classroomID } = req.params;
+    const { classroom_name } = req.params;
 
     //Find user with specific class
-    const query = "SELECT * FROM student WHERE classroom_id = $1";
-    const results = await db.query(query, [classroomID]);
+    let query = `SELECT s.id as id, s.name as name, s.age as age, nomor_induk_siswa , c.name as classroom_name, c.id as classroom_id
+    FROM student as s
+    INNER JOIN classroom as c ON s.classroom_id = c.id
+    WHERE c.name = $1`;
 
-    if (results.rows.length == 0) {
-      res.status(404).json({ message: "Student Not Found", error: true });
-      return;
-    }
+    const results = await db.query(query, [classroom_name]);
+
+    // if (results.rows.length == 0) {
+    //   res.status(404).json({ message: "Student Not Found", error: true });
+    //   return;
+    // }
 
     const students = results.rows;
     res.status(200).json({
@@ -92,9 +101,34 @@ const getStudentBySubject = async (req, res) => {
       message: "Successfully GetStudentBySubject",
       data: students,
       error: false,
+      limit: parseInt(req.query.limit) || 10,
+      page: parseInt(req.query.page) || 0,
+      totalRows: results.rows.length,
     });
   } catch (error) {
     res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const getAllMockData = async (req, res) => {
+  try {
+    let query = `SELECT * FROM mock_data`;
+
+    const results = await db.query(query);
+
+    // if (results.rows.length == 0) {
+    //   res.status(404).json({ message: "Student Not Found" });
+    //   return;
+    // }
+
+    const student = results.rows;
+
+    res.status(200).json({
+      message: "Successfully GetAllStudent",
+      data: student,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
 
@@ -103,4 +137,5 @@ module.exports = {
   getStudentByClassroom,
   getStudentById,
   getStudentBySubject,
+  getAllMockData,
 };

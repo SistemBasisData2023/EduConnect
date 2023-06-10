@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
+import Logo from "../../assets/LogoImage.png";
 // * React icons
 import { IoIosArrowBack } from "react-icons/io";
 import { SlSettings } from "react-icons/sl";
@@ -17,7 +17,7 @@ import { useMediaQuery } from "react-responsive";
 const Sidebar = ({ isOpen, setIsOpen }) => {
   let isTab = useMediaQuery({ query: "(max-width: 1100px)" });
   const { pathname } = useLocation();
-  console.log(isTab);
+
   const subMenusList = [
     {
       name: "build",
@@ -96,11 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         {/* logo */}
         <div className="flex items-center gap-2.5 font-medium border-b border-slate-300 py-3 my-1 mx-3 cursor-pointer">
-          <img
-            src="https://img.icons8.com/color/512/firebase.png"
-            alt="Icon"
-            width={45}
-          />
+          <img src={Logo} alt="Icon" width={45} />
           <span className="text-xl whitespace-pre ">EduConnect</span>
         </div>
 
@@ -117,15 +113,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </NavLink>
             </li>
             <li>
-              <NavLink className={"link"} to="/authentication">
+              <NavLink className={"link"} to="/student">
                 <BsPerson size={23} className="min-w-max" />
-                Authentication
+                Student
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/storage"} className="link">
+              <NavLink to={"/teacher"} className="link">
                 <HiOutlineDatabase size={23} className="min-w-max" />
-                Storage
+                Teacher
               </NavLink>
             </li>
 
@@ -144,15 +140,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             )}
 
             <li>
-              <NavLink to={"/settings"} className="link">
+              <NavLink to={"/resource"} className="link">
                 <SlSettings size={23} className="min-w-max" />
-                Settings
+                Resource
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/settings"} className="link">
+              <NavLink to={"/subject"} className="link">
                 <SlSettings size={23} className="min-w-max" />
-                Settings
+                Courses
               </NavLink>
             </li>
           </ul>

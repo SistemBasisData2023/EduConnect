@@ -8,7 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-const SubjectCard = () => {
+const SubjectCard = (props) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleCardClick = () => {
@@ -17,7 +17,7 @@ const SubjectCard = () => {
 
   return (
     <div
-      className={`max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 transform hover:scale-105`}
+      className={`max-w-[12rem] mx-auto bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 transform hover:scale-105`}
       onClick={handleCardClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -28,16 +28,20 @@ const SubjectCard = () => {
         alt="Course"
       />
       <div className="p-2">
-        <h2 className="text-lg font-bold text-gray-800 mb-1">Course Title</h2>
-        <p className="text-gray-600 text-sm">Course Description</p>
-        <div className="mt-2">
+        <h2 className="text-lg font-bold text-gray-800 mb-1">
+          {props?.subjectName || "Course Title"}
+        </h2>
+        <p className="text-gray-600 text-sm">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, harum.
+        </p>
+        {/* <div className="mt-2">
           <span className="inline-block bg-gray-200 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 mr-1">
             Category
           </span>
           <span className="inline-block bg-gray-200 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
             Level
           </span>
-        </div>
+        </div> */}
       </div>
       <div className="bg-gray-100 p-2">
         <div className="flex items-center">
@@ -48,7 +52,7 @@ const SubjectCard = () => {
           />
           <div>
             <p className="text-gray-900 font-semibold text-sm">
-              Instructor Name
+              {props?.teacherName || "Instructor Name"}
             </p>
             <p className="text-gray-700 text-xs">Institution</p>
           </div>

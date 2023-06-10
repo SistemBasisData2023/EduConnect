@@ -13,7 +13,7 @@ router.post("/addResource", upload.single("filename"), addResource);
 
 router.get("/", getAllResources);
 router.get("/downloadResource/:resource_id", downloadResource);
-router.get("/getResourcesBySubject/:subject_id", getResourcesBySubject);
+router.get("/getResourcesBySubject/:subject_name", getResourcesBySubject);
 
 const ResourceRoute = router;
 module.exports = ResourceRoute;

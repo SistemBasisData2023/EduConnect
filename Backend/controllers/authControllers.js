@@ -1,4 +1,5 @@
 //Guru, Admin, Murid
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { db } = require("../config/connectToDatabase");
 const { checkIdExists } = require("../services/services");
@@ -80,6 +81,7 @@ const login = async (req, res) => {
   try {
     //Take data from req.body
     const { username, password } = req.body;
+    let data;
 
     //Find admin with the username
     const query = "SELECT * FROM users WHERE username = $1";
@@ -99,12 +101,42 @@ const login = async (req, res) => {
       return;
     }
 
+    data = user; //Jika Admin
+
+    if (user.role === "Teacher") {
+      const teacherQuery = `SELECT subject.ID as subject_id, subject.name as subject_name, teacher.name AS name, teacher.age AS age, teacher.nomor_induk_guru AS nomor_induk_guru, users.username AS username, teacher.id AS id, teacher.classroom_id AS classroom_id, users.role AS role, users.id as user_id
+      FROM subject
+      JOIN teacher ON subject.teacher_id = teacher.ID
+      JOIN users ON teacher.user_id = users.ID
+      WHERE users.username = $1`;
+
+      const finalResult = await db.query(teacherQuery, [username]);
+      data = finalResult.rows[0];
+    } else if (user.role === "Student") {
+      const studentQuery = `SELECT student.*, users.username, users.role
+      FROM student
+      JOIN users ON student.user_id = users.ID
+      WHERE users.username = $1`;
+
+      const finalResult = await db.query(studentQuery, [username]);
+      data = finalResult.rows[0];
+    } else {
+      user.name = user.username;
+    }
+
     //Generate Token
+    const accessToken = generateAccessToken(user);
 
     //Create Cookie
+    res.cookie("authorization", accessToken, {
+      httpOnly: true,
+      maxAge: 24 * 1000 * 60 * 60, //24 jam = 60 * 60 * 24 * 1 * 1000
+    });
 
     //Response
-    res.status(200).json({ message: "Login Succesfull", data: user });
+    res
+      .status(200)
+      .json({ message: "Login Succesfull", data: data, token: accessToken });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -149,9 +181,94 @@ const getUserByID = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("authorization");
+    res.status(200).json({ message: "Logout successfull" });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+const verifyToken = async (req, res) => {
+  const token = req.cookies.authorization;
+
+  if (!token) return res.status(401).json({ message: "Token Missing" });
+
+  try {
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
+    });
+
+    // const user = {};
+
+    // // If verification is successful
+    // user.username = decoded.username;
+    // user.role = decoded.role;
+    // user.id = decoded.id;
+
+    // console.log(user);
+
+    // Generate Back User
+    const user = await generateBackUser(decoded);
+
+    res.status(200).json({ message: "Success", token: token, user: user });
+  } catch (err) {
+    res.status(403).json({ message: err.message });
+  }
+};
+
+const generateBackUser = async (user) => {
+  let data = {};
+  try {
+    if (user.role === "Teacher") {
+      const teacherQuery = `SELECT subject.ID as subject_id, subject.name as subject_name, teacher.name AS name, teacher.age AS age, teacher.nomor_induk_guru AS nomor_induk_guru, users.username AS username, teacher.id AS id, teacher.classroom_id AS classroom_id, users.role AS role, users.id as user_id
+      FROM subject
+      JOIN teacher ON subject.teacher_id = teacher.ID
+      JOIN users ON teacher.user_id = users.ID
+      WHERE users.username = $1`;
+
+      const finalResult = await db.query(teacherQuery, [user.username]);
+
+      data = finalResult.rows[0];
+    } else if (user.role === "Student") {
+      const studentQuery = `SELECT student.*, users.username, users.role
+      FROM student
+      JOIN users ON student.user_id = users.ID
+      WHERE users.username = $1`;
+
+      const finalResult = await db.query(studentQuery, [user.username]);
+      data = finalResult.rows[0];
+    } else {
+      data.username = user.username;
+      data.role = user.role;
+      data.id = user.id;
+      data.name = user.username;
+    }
+  } catch (error) {
+    throw error;
+  }
+  //Nedd user.role, user.username
+  console.log(data);
+  return data;
+};
+
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user.id, role: user.role, username: user.username },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "1h" }
+  );
+};
+
 module.exports = {
   register,
   login,
   getAllUsers,
   getUserByID,
+  logout,
+  verifyToken,
 };

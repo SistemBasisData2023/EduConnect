@@ -5,6 +5,7 @@ const {
   getSubjectByName,
   getAllSubjects,
   addStudent,
+  getSubjectByStudent,
 } = require("../controllers/subjectControllers");
 
 const router = express.Router();
@@ -14,6 +15,7 @@ router.post("/addStudent", addStudent);
 
 router.get("/getSubjectByID/:id", getSubjectByID);
 router.get("/getSubjectByName/:name", getSubjectByName);
+router.get("/:student_id", getSubjectByStudent);
 router.get("/", getAllSubjects);
 
 const SubjectRoute = router;

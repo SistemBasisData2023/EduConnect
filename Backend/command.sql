@@ -23,7 +23,8 @@ CREATE TABLE teacher (
 CREATE TABLE subject (
 ID UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 name VARCHAR(30) UNIQUE NOT NULL,
-teacher_id REFERENCES teacher(id)
+teacher_id REFERENCES teacher(id),
+enroll_code varchar(10) UNIQUE,
 );
 
 CREATE TABLE student (

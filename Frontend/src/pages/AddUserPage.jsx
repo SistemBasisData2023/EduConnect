@@ -9,12 +9,11 @@ import {
   Tab,
   TabPanel,
 } from "@material-tailwind/react";
-import Header from "../components/Header";
 
 const AddUserPage = () => {
   return (
     /* h-[90vh] flex justify-center items-center */
-    <div className="mx-3 ">
+    <div className="mx-3 overflow-y-auto scrollbar-thin scrollbar-track-white scrollbar-thumb-blue-gray-50 h-[90vh]">
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-xl my-12 p-5">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
           Add User
@@ -96,7 +95,7 @@ const AddUserPage = () => {
                               id="country"
                               name="country"
                               autoComplete="country-name"
-                              className="block mx-auto w-full  rounded-md border-0 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-sm sm:text-sm sm:leading-6"
+                              className="block mx-auto w-full bg-white  rounded-md border-0 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-sm sm:text-sm sm:leading-6"
                             >
                               <option>United States</option>
                               <option>Canada</option>

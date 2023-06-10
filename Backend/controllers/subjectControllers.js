@@ -1,12 +1,23 @@
 const { db } = require("../config/connectToDatabase");
-const { checkIdExists } = require("../services/services");
+const { checkIdExists, uploadHandler } = require("../services/services");
 
 const createSubject = async (req, res) => {
   try {
-    const { name } = req.body;
+    await db.query("BEGIN");
+    const { name, teacher_id, enroll_code } = req.body;
 
-    const query = "INSERT INTO subject (name) VALUES ($1) RETURNING *";
-    const result = await db.query(query, [name]);
+    const image_url = await uploadHandler(req, "SubjectImage");
+
+    console.log(image_url);
+    const query =
+      "INSERT INTO subject (name, teacher_id, enroll_code, image_url) VALUES ($1, $2, $3, $4) RETURNING *";
+
+    const result = await db.query(query, [
+      name,
+      teacher_id,
+      enroll_code,
+      image_url,
+    ]);
 
     const response = result.rows[0];
 
@@ -15,8 +26,10 @@ const createSubject = async (req, res) => {
       data: response,
       error: false,
     });
+    await db.query("COMMIT");
   } catch (error) {
     res.status(404).json({ message: error.message, error: true });
+    await db.query("ROLLBACK");
   }
 };
 
@@ -68,7 +81,9 @@ const getSubjectByName = async (req, res) => {
 
 const getAllSubjects = async (req, res) => {
   try {
-    const query = "SELECT * FROM subject";
+    const query = `SELECT s.* , t.name as teacher_name
+    FROM subject as s
+    JOIN teacher as t ON s.teacher_id = t.id;`;
     const results = await db.query(query);
 
     if (results.rows.length == 0) {
@@ -124,10 +139,34 @@ const addStudent = async (req, res) => {
   }
 };
 
+const getSubjectByStudent = async (req, res) => {
+  try {
+    const student_id = req.params.student_id;
+
+    const query = `SELECT subject.*, enrollment.student_id, teacher.name AS teacher_name
+    FROM subject
+    JOIN enrollment ON subject.ID = enrollment.subject_id
+    JOIN teacher ON subject.teacher_id = teacher.ID
+    WHERE enrollment.student_id = $1`;
+
+    const results = await db.query(query, [student_id]);
+    const subjects = results.rows;
+
+    res.status(200).json({
+      message: "Successfully getSubjectByStudent",
+      data: subjects,
+      error: false,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
 module.exports = {
   createSubject,
   getAllSubjects,
   getSubjectByID,
   getSubjectByName,
+  getSubjectByStudent,
   addStudent,
 };

@@ -13,6 +13,8 @@ const addResource = async (req, res) => {
       throw new Error("Tidak ada file yang diunggah.");
     }
 
+    console.log(req.body);
+
     //Get Data from req.body
     const { fileName, description, subject_id } = req.body;
 
@@ -69,7 +71,17 @@ const downloadResource = async (req, res) => {
 const getAllResources = async (req, res) => {
   try {
     //Find All Students
-    const query = "SELECT * FROM resource";
+    const query = `SELECT
+    resource.ID,
+    resource.name,
+    resource.url,
+    resource.description,
+    subject.id AS subject_id,
+    subject.name AS subject_name
+FROM
+    resource
+JOIN
+    subject ON resource.subject_id = subject.ID;`;
 
     const results = await db.query(query);
 
@@ -90,24 +102,28 @@ const getAllResources = async (req, res) => {
 
 const getResourcesBySubject = async (req, res) => {
   try {
-    const subject_id = req.params.subject_id;
+    const subject_name = req.params.subject_name;
     //Query SQL
-    const query = `
-      SELECT r.id, r.name, r.url, r.description, s.name AS subject, t.name AS teacher
-      FROM resource AS r
-      INNER JOIN subject AS s ON r.subject_id = s.id
-      INNER JOIN teacher AS t ON s.teacher_id = t.id
-      WHERE r.subject_id = $1;
-    `;
+    const query = `SELECT
+    resource.ID,
+    resource.name,
+    resource.url,
+    resource.description,
+    subject.id AS subject_id,
+    subject.name AS subject_name
+FROM
+    resource
+JOIN
+    subject ON resource.subject_id = subject.ID WHERE subject.name = $1`;
 
-    const results = await db.query(query, [subject_id]);
+    const results = await db.query(query, [subject_name]);
 
     if (results.rows.length == 0) {
       res.status(404).json({ message: "resources Not Found", error: true });
       return;
     }
 
-    const resources = results.rows[0];
+    const resources = results.rows;
 
     res.status(200).json({
       message: "Successfully GetResourcesBySubject",

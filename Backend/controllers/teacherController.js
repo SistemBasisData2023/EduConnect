@@ -14,10 +14,10 @@ const getAllTeachers = async (req, res) => {
       classroom.name AS classroom_name
   FROM
       teacher
-  JOIN
+  LEFT JOIN
       subject ON teacher.ID = subject.teacher_id
   JOIN
-      classroom ON teacher.classroom_id = classroom.ID;`;
+      classroom ON teacher.classroom_id = classroom.ID`;
 
     const results = await db.query(query);
 
@@ -97,4 +97,32 @@ const getTeacherBySubject = async (req, res) => {
   }
 };
 
-module.exports = { getAllTeachers, getTeacherBySubject, getTeacherById };
+// Asynchronous function to fetch teachers not present in the subject table
+const getAvailableTeacher = async (req, res) => {
+  try {
+    const query = `
+      SELECT ID, name
+      FROM teacher
+      WHERE ID NOT IN (SELECT teacher_id FROM subject)
+    `;
+
+    const { rows } = await db.query(query);
+
+    const teachers = rows;
+
+    res.status(200).json({
+      message: "Successfully GetAvailableTeacher",
+      data: teachers,
+      error: false,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message, error: true });
+  }
+};
+
+module.exports = {
+  getAllTeachers,
+  getTeacherBySubject,
+  getTeacherById,
+  getAvailableTeacher,
+};

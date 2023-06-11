@@ -1,6 +1,7 @@
 import React from "react";
 import UI from "../assets/library.png";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../components/Context/UserContext";
 
 import { Link } from "react-router-dom";
 
@@ -28,7 +29,10 @@ export default function LoginWinston() {
         className="bg-cover mx-auto w-screen flex h-screen flex-col justify-center px-[10%]"
         style={{ backgroundImage: `url(${UI})` }}
       >
-        <form className="w-[50%] bg-black bg-opacity-30 border-blue-400 shadow-lg p-8 px-8 rounded-lg mx-auto">
+        <form
+          className="w-[50%] bg-black bg-opacity-30 border-blue-400 shadow-lg p-8 px-8 rounded-lg mx-auto"
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <h2 className="text-2xl dark:text-gray-300 font-bold text-center">
             SIGN IN
           </h2>
@@ -38,6 +42,7 @@ export default function LoginWinston() {
               placeholder="username"
               className="p-2 bg-none border-x-0 border-t-0 border-solid border-white mt-2 p02 bg-transparent border-2 focus:outline-none"
               type="text"
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="flex flex-col text-white py-2">
@@ -47,6 +52,7 @@ export default function LoginWinston() {
                 type={isRevealedPassword ? "text" : "password"}
                 placeholder=""
                 className="p-2 w-full mt-2 p02 bg-transparent border-solid border-x-0 border-t-0 border-b-2  focus:outline-none"
+                onChange={(e) => setPassword(e.target.value)}
               />
               <span
                 onClick={() => setIsRevealedPassword((prevState) => !prevState)}
@@ -62,7 +68,10 @@ export default function LoginWinston() {
           </div>
 
           <div className="flex w-full justify-center mt-3">
-            <button className="w-[25%] bg-blue-500 p-3 rounded-lg text-white">
+            <button
+              type="submit"
+              className="w-[25%] bg-blue-500 p-3 rounded-lg text-white"
+            >
               Sign in
             </button>
           </div>

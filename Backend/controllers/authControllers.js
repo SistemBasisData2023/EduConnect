@@ -252,7 +252,7 @@ const generateBackUser = async (user) => {
     throw error;
   }
   //Nedd user.role, user.username
-  console.log(data);
+
   return data;
 };
 

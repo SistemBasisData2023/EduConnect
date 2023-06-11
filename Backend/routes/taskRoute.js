@@ -32,7 +32,7 @@ router.get("/submission/:task_id", getTaskSubmission);
 router.post("/assign", upload.single("filename"), assignTask);
 router.post("/submit", upload.single("filename"), submitTask);
 router.post("/submission/addScore", addScore);
-router.put("/updateStatusBySubjectId", updateTaskStatus);
+router.put("/updateStatus", updateTaskStatus);
 
 //Student
 router.get("/:subject_id/:student_id", getTaskBySubject);

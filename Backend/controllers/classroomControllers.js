@@ -21,7 +21,7 @@ const createClassroom = async (req, res) => {
 
 const getAllClassrooms = async (req, res) => {
   try {
-    const query = "SELECT * FROM classroom";
+    const query = "SELECT * FROM classroom ORDER BY name ASC";
     const results = await db.query(query);
 
     if (results.rows.length == 0) {

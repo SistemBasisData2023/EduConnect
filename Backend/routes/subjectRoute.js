@@ -6,12 +6,18 @@ const {
   getAllSubjects,
   addStudent,
   getSubjectByStudent,
+  createFeedback,
+  calculateFeedbackScore,
 } = require("../controllers/subjectControllers");
+const upload = require("../config/multer");
 
 const router = express.Router();
 
-router.post("/create", createSubject);
+router.post("/create", upload.single("filename"), createSubject);
 router.post("/addStudent", addStudent);
+router.post("/addFeedback", createFeedback);
+
+router.get("/calculate", calculateFeedbackScore);
 
 router.get("/getSubjectByID/:id", getSubjectByID);
 router.get("/getSubjectByName/:name", getSubjectByName);

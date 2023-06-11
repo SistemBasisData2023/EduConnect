@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../../assets/LogoImage.png";
 // * React icons
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoIosSchool } from "react-icons/io";
 import { SlSettings } from "react-icons/sl";
+import { BsJournalBookmark } from "react-icons/bs";
+import { GrUserAdmin } from "react-icons/gr";
+import { GiBookmarklet } from "react-icons/gi";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineDatabase } from "react-icons/hi";
 import { TbReportAnalytics } from "react-icons/tb";
-import { RiBuilding3Line } from "react-icons/ri";
+import { RiBuilding3Line, RiAdminLine } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
 import SubMenu from "./SubMenu";
 import { MdMenu } from "react-icons/md";
@@ -113,17 +116,20 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </NavLink>
             </li>
             <li>
-              <NavLink className={"link"} to="/student">
-                <BsPerson size={23} className="min-w-max" />
-                Student
+              <NavLink
+                className={`link  ${pathname.includes("task") && "active"}`}
+                to="/subject"
+              >
+                <IoIosSchool t size={23} className="min-w-max" />
+                Courses
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to={"/teacher"} className="link">
                 <HiOutlineDatabase size={23} className="min-w-max" />
                 Teacher
               </NavLink>
-            </li>
+            </li> */}
 
             {/* submenu */}
             {(isOpen || isTab) && (
@@ -131,24 +137,30 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <small className="pl-3 text-slate-500 inline-block mb-2">
                   Product Category
                 </small>
-                {subMenusList?.map((menu) => (
+                {/* {subMenusList?.map((menu) => (
                   <div key={menu.name} className="">
                     <SubMenu data={menu} />
                   </div>
-                ))}
+                ))} */}
+                <div className="">
+                  <SubMenu menu1={"student"} menu2={"teacher"} />
+                </div>
+                {/* <div className="">
+                  <SubMenu menu1={"student"} menu2={"teacher"} />
+                </div> */}
               </div>
             )}
 
             <li>
               <NavLink to={"/resource"} className="link">
-                <SlSettings size={23} className="min-w-max" />
+                <BsJournalBookmark size={23} className="min-w-max" />
                 Resource
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/subject"} className="link">
-                <SlSettings size={23} className="min-w-max" />
-                Courses
+              <NavLink to={"/addUser"} className="link">
+                <RiAdminLine size={23} className="min-w-max" />
+                Admin
               </NavLink>
             </li>
           </ul>

@@ -1,19 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BsPersonFill, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 import { AiOutlineSearch } from "react-icons/ai";
-import {
-  IconButton,
-  SpeedDial,
-  SpeedDialHandler,
-  SpeedDialContent,
-  SpeedDialAction,
-} from "@material-tailwind/react";
-import {
-  PlusIcon,
-  HomeIcon,
-  CogIcon,
-  Square3Stack3DIcon,
-} from "@heroicons/react/24/outline";
+
 import { TablePagination, Typography } from "@mui/material";
 import LoadingPage from "./LoadingPage";
 import axios from "axios";
@@ -141,11 +129,15 @@ const TeacherPage = () => {
                 <p className="pl-4">{teacher.name}</p>
               </div>
               <p className="text-gray-600 sm:text-left text-right">
-                {teacher.subject_name ? teacher.subject_name : "No Class"}
+                {teacher.subject_name ? teacher.subject_name : "No Course"}
               </p>
               <p className="hidden md:flex">{teacher.nomor_induk_guru}</p>
               <div className="sm:flex hidden justify-between items-center">
-                <p>{teacher.classroom_name}</p>
+                <p>
+                  {teacher.classroom_name
+                    ? teacher.classroom_name
+                    : "No Classroom"}
+                </p>
                 <BsThreeDotsVertical />
               </div>
             </li>

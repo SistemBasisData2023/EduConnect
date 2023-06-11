@@ -51,7 +51,7 @@ const SpeedDialComp = ({ handleOpen, addMessage, icon }) => {
               Home
             </Typography>
           </SpeedDialAction>
-          <SpeedDialAction className="relative">
+          <SpeedDialAction className={`${addMessage ? "relative" : "hidden"}`}>
             <CogIcon className="h-5 w-5" onClick={() => handleOpen()} />
             <Typography onClick={() => handleOpen()} {...labelProps}>
               {addMessage}

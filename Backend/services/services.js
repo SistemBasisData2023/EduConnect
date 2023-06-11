@@ -15,7 +15,7 @@ const uploadHandler = async (req, folderName, fileName) => {
         .split(".")
         .slice(0, -1)
         .join(".");
-      finalFileName = originalFileNameWithoutExtension;
+      fileName = originalFileNameWithoutExtension;
     }
 
     const storageRef = ref(

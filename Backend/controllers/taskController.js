@@ -5,9 +5,23 @@ const {
   getTaskObjectById,
 } = require("../services/services");
 
-//AssignTask
-//SubmitTask
-//GetTaskBySubject
+//Update Timestamp
+// const updateStatus = async (req, res) => {
+//   try {
+//     const currentTime = new Date(); // Get the current time
+//     const query = `
+//       UPDATE task
+//       SET isActive = false
+//       WHERE deadline <= $1;`;
+
+//     await pool.query(query, [currentTime]);
+
+//     res.status(200).json({ message: "isActive field updated successfully." });
+//   } catch (error) {
+//     console.error("Error updating isActive field:", error);
+//     res.status(500).json({ message: "Error updating isActive field." });
+//   }
+// };
 
 //Assign Task to student (POV Teacher)
 const assignTask = async (req, res) => {
@@ -383,15 +397,15 @@ const getOverdueTeacherTask = async (req, res) => {
 };
 
 const updateTaskStatus = async (req, res) => {
-  const subject_Id = req.body.subject_Id; // Assuming subjectId is sent in the request body
+  // const subject_Id = req.body.subject_Id; // Assuming subjectId is sent in the request body
 
   try {
     const currentTime = new Date();
 
     // Update isActive to false for tasks with the given subjectId and deadline < currentTime
     const result = await db.query(
-      "UPDATE task SET isActive = false WHERE subject_id = $1 AND deadline < $2",
-      [subject_Id, currentTime]
+      "UPDATE task SET is_active = false WHERE deadline < $1",
+      [currentTime]
     );
 
     if (result.rowCount === 0) {

@@ -11,13 +11,13 @@ const PickDate = ({ setDeadline }) => {
   const handleValueChange = (newValue) => {
     const dateInput = newValue.startDate;
     const currentDate = new Date(dateInput);
-    currentDate.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+    currentDate.setHours(0, 0, 0, 0); // Set time to 00:00 (midnight)
 
-    const formattedDateTime = currentDate.toISOString();
+    const formattedDateTime =
+      currentDate.toISOString().split("T")[0] + "T00:00:00.000Z";
 
     console.log(formattedDateTime);
     setDeadline(formattedDateTime);
-    //Placeholder untuk date
     setValue(newValue);
   };
 

@@ -162,6 +162,62 @@ const getSubjectByStudent = async (req, res) => {
   }
 };
 
+// Controller function to create new feedback
+const createFeedback = async (req, res) => {
+  try {
+    const { student_id, score, subject_id } = req.body;
+
+    console.log(req.body);
+    //Check if user already submitted a feedback
+    const existingFeedback = await db.query(
+      "SELECT * FROM feedback WHERE student_id = $1 AND subject_id = $2",
+      [student_id, subject_id]
+    );
+
+    if (existingFeedback.rows.length > 0) {
+      return res.status(400).json({ message: "Feedback already submitted." });
+    }
+
+    // Insert new feedback into the feedback table
+    await db.query(
+      "INSERT INTO feedback (student_id, score, subject_id) VALUES ($1, $2, $3)",
+      [student_id, score, subject_id]
+    );
+
+    res
+      .status(201)
+      .json({ message: "Feedback created successfully.", error: false });
+  } catch (error) {
+    console.error("Error creating feedback:", error);
+    res.status(500).json({
+      message: "An error occurred while creating feedback.",
+      error: false,
+    });
+  }
+};
+
+// Controller function to calculate feedback_score
+const calculateFeedbackScore = async (req, res) => {
+  try {
+    // Calculate the average score for each subject
+    const result = await db.query(`
+      UPDATE subject
+      SET feedback_score = (
+        SELECT AVG(score) FROM feedback WHERE feedback.subject_id = subject.id
+      )
+    `);
+
+    res
+      .status(200)
+      .json({ message: "Feedback score calculated successfully." });
+  } catch (error) {
+    console.error("Error calculating feedback score:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while calculating feedback score." });
+  }
+};
+
 module.exports = {
   createSubject,
   getAllSubjects,
@@ -169,4 +225,6 @@ module.exports = {
   getSubjectByName,
   getSubjectByStudent,
   addStudent,
+  createFeedback,
+  calculateFeedbackScore,
 };

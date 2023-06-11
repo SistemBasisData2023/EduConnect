@@ -84,6 +84,15 @@ const AddTaskPage = () => {
   };
 
   //API
+  const updateTaskStatus = async () => {
+    try {
+      await axios.put("http://localhost:5000/task/updateStatus");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //API
   const assignTask = async () => {
     try {
       const formData = new FormData();
@@ -109,6 +118,7 @@ const AddTaskPage = () => {
 
       //Call Toast
       success();
+      updateTaskStatus();
       setTimeout(() => {
         navigate(`/task/${subject_id}`);
       }, 3000);

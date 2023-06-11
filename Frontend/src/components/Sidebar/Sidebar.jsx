@@ -165,7 +165,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </li>
           </ul>
           {/* Spark */}
-          {isOpen && (
+          {/* {isOpen && (
             <div className="flex-1 z-50 max-h-48 my-auto whitespace-pre w-full font-medium">
               <div className="flex p-4 items-center justify-between border-y py-5 border-slate-300">
                 <div className="">
@@ -177,7 +177,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </p>
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Toggle Sidebar Button */}
